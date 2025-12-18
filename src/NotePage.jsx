@@ -31,6 +31,12 @@ export default function NotePage() {
     const noteRef = ref(db, `notes/${id}`);
 
     const timeout = setTimeout(async () => {
+      // Don't create or update a note in the database if the text is empty/whitespace
+      if (text.trim() === "") {
+        setSaving(false);
+        return;
+      }
+
       setSaving(true);
       await set(noteRef, { text });
       setSaving(false);
