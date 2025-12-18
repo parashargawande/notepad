@@ -8,6 +8,17 @@ export default function NotePage() {
   const [text, setText] = useState("");
   const [saving, setSaving] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [isSmallScreen, setIsSmallScreen] = useState(false);
+
+  useEffect(() => {
+    const checkSize = () => {
+      setIsSmallScreen(window.innerWidth <= 480);
+    };
+
+    checkSize();
+    window.addEventListener("resize", checkSize);
+    return () => window.removeEventListener("resize", checkSize);
+  }, []);
 
   useEffect(() => {
     if (!id) return;
@@ -47,26 +58,44 @@ export default function NotePage() {
 
   if (loading) {
     return (
-      <div style={styles.container}>
-        <header style={styles.header}>
-          <div style={styles.title}>Simple Notepad</div>
-          <div style={styles.status}>Loading...</div>
-        </header>
+      <div
+        style={{
+          ...styles.container,
+          padding: isSmallScreen ? "8px" : styles.container.padding
+        }}
+      >
+        {!isSmallScreen && (
+          <header style={styles.header}>
+            <div style={styles.title}>Simple Notepad</div>
+            <div style={styles.status}>Loading...</div>
+          </header>
+        )}
       </div>
     );
   }
 
   return (
-    <div style={styles.container}>
-      <header style={styles.header}>
-        <div style={styles.title}>Simple Notepad</div>
-        <div style={styles.status}>{saving ? "Saving..." : "Saved"}</div>
-        <div style={styles.link}>
-          Share this URL: <code>{window.location.href}</code>
-        </div>
-      </header>
+    <div
+      style={{
+        ...styles.container,
+        padding: isSmallScreen ? "8px" : styles.container.padding
+      }}
+    >
+      {!isSmallScreen && (
+        <header style={styles.header}>
+          <div style={styles.title}>Simple Notepad</div>
+          <div style={styles.status}>{saving ? "Saving..." : "Saved"}</div>
+          <div style={styles.link}>
+            Share this URL: <code>{window.location.href}</code>
+          </div>
+        </header>
+      )}
       <textarea
-        style={styles.textarea}
+        style={{
+          ...styles.textarea,
+          fontSize: isSmallScreen ? "16px" : styles.textarea.fontSize,
+          padding: isSmallScreen ? "10px" : styles.textarea.padding
+        }}
         value={text}
         onChange={(e) => setText(e.target.value)}
         placeholder="Start typing your notes here..."
@@ -107,7 +136,6 @@ const styles = {
   textarea: {
     flex: 1,
     width: "100%",
-    marginTop: "8px",
     backgroundColor: "#020617",
     color: "#e5e7eb",
     borderRadius: "8px",
